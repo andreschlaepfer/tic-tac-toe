@@ -7,25 +7,32 @@ function App() {
   const [boardValue, setBoardValue] = useState([2, 7, 6, 9, 5, 1, 4, 3, 8]);
   const [player, setPlayer] = useState("O");
   const [OScore, setOScore] = useState(0);
+  const [OSquare, setOSquare] = useState([]);
   const [XScore, setXScore] = useState(0);
+  const [XSquare, setXSquare] = useState([]);
   const [result, setResult] = useState("none");
+  const [Olenght, setOlenght] = useState(0);
+  const [Xlenght, setXlenght] = useState(0);
 
   useEffect(() => {
     checkScore();
     checkWin();
-    checkTie();
   }, [board, result]);
 
   const chooseSquare = (square) => {
     setBoard(
       board.map((val, idx) => {
-        if (idx == square && val == "") {
-          if (player == "O") {
+        if (idx === square && val === "") {
+          if (player === "O") {
             setOScore(OScore + boardValue[idx]);
+            setOSquare(OSquare.concat(boardValue[idx]));
+            setOlenght(Olenght + 1);
           }
 
-          if (player == "X") {
+          if (player === "X") {
             setXScore(XScore + boardValue[idx]);
+            setXSquare(XSquare.concat(boardValue[idx]));
+            setXlenght(Xlenght + 1);
           }
 
           return player;
@@ -35,37 +42,83 @@ function App() {
       })
     );
 
-    if (player == "O") {
+    if (player === "O") {
       setPlayer("X");
     } else {
       setPlayer("O");
     }
   };
 
-  const checkTie = () => {
-    if (board.includes("") == false) {
-      setResult("Tie");
-    }
-  };
   const checkScore = () => {
-    if (XScore == 15) {
+    var i;
+    var j;
+    var k;
+    if (XScore === 15 && Xlenght === 3) {
       setResult("X");
     }
-    if (OScore == 15) {
+    if (XScore > 15 && Xlenght > 3 && Xlenght < 5) {
+      let rest = XScore - 15;
+      if (XSquare.includes(rest)) {
+        setResult("X");
+      }
+    }
+    if (XScore > 15 && Xlenght > 4) {
+      for (i = 0; i < 3; i++) {
+        for (j = i + 1; j < 4; j++) {
+          for (k = j + 1; k < 5; k++) {
+            if (XSquare[i] + XSquare[j] + XSquare[k] === 15) {
+              setResult("X");
+            }
+          }
+        }
+      }
+    } else {
+      if (board.includes("") === false && result === "none") {
+        setResult("Tie");
+      }
+    }
+
+    if (OScore === 15 && Olenght === 3) {
       setResult("O");
+    }
+    if (OScore > 15 && Olenght > 3 && Olenght < 5) {
+      let rest = OScore - 15;
+      if (OSquare.includes(rest)) {
+        setResult("O");
+      }
+    }
+    if (OScore > 15 && Olenght > 4) {
+      for (i = 0; i < 3; i++) {
+        for (j = i + 1; j < 4; j++) {
+          for (k = j + 1; k < 5; k++) {
+            if (OSquare[i] + OSquare[j] + OSquare[k] === 15) {
+              setResult("O");
+            }
+          }
+        }
+      }
+    } else {
+      if (board.includes("") === false && result === "none") {
+        setResult("Tie");
+      }
     }
   };
   const checkWin = () => {
-    if (result != "none" && result != "Tie") {
+    if (result !== "none" && result !== "Tie") {
       alert(`Game Finished. Winning player: ${result} `);
     }
-    if (result == "Tie") {
+    if (result === "Tie") {
       alert("Game Finished. It was a tie!");
     }
   };
 
   return (
     <div className="App">
+      <h1>{OSquare}</h1>
+      <div>{OScore}</div>
+      <div>{result}</div>
+      <div>{XScore}</div>
+
       <div className="board">
         <div className="row">
           <Square
